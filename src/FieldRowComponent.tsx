@@ -1,25 +1,22 @@
-import React, {ChangeEvent, FocusEvent, FormEvent, useRef, useState} from "react";
-import {Input, Col, Collapse, Row, FormGroup, Label, Form, Button} from "reactstrap";
+import React, {ChangeEvent, useState} from "react";
+import {Input, Col, Collapse, Row, FormGroup, Label, Button} from "reactstrap";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState, editMetrics} from "./store";
 import {EnumMetrics, IThemeItem} from "./Interfaces";
-import {stylesService} from "./utils";
+import {useStyleGenerator} from "./hooks"
 
 
 const FieldRowComponent: React.FC<{ stylePropId: string, parentId: string }> = ({stylePropId, parentId}) =>{
     const [isEditing, setIsEditing] = useState(false);
     const dispatch = useDispatch();
-    const [val, setVal] = useState('ss');
-    const themeState = useSelector((state: RootState)=>state.theme);
     const styleProperty: IThemeItem = useSelector((state: RootState)=>state.theme[parentId].items[stylePropId]);
+    const [inputValue, setInputValue, stylesStrings] = useStyleGenerator(styleProperty.content);
 
     const toggle = () => setIsEditing(!isEditing);
     const onCheckBoxChoose = (e: ChangeEvent<HTMLInputElement>) => {
         const metrics = e.target.value as EnumMetrics;
-        dispatch(editMetrics({id: stylePropId, parentId:  parentId, metrics }));
+        dispatch( editMetrics({id: stylePropId, parentId:  parentId, metrics }) );
     }
-
-    const stylesObject = stylesService(styleProperty.content, themeState);
 
     return (
         <FormGroup className={isEditing ? 'row__container row__container-open' : 'row__container'}>
@@ -30,7 +27,7 @@ const FieldRowComponent: React.FC<{ stylePropId: string, parentId: string }> = (
                             {styleProperty.name}:
                         </div>
                         <div className='field__brief'>
-                            {stylesObject.getStringForStyles().css}
+                            {stylesStrings.css}
                         </div>
                     </Label>
                 </Col>
@@ -53,7 +50,10 @@ const FieldRowComponent: React.FC<{ stylePropId: string, parentId: string }> = (
                         </Label>
                     </Label>
                     <Col md={10} >
-                        <Input value={stylesObject.getStringForStyles().inputText}/>
+                        <Input
+                            value={inputValue}
+                            onChange={setInputValue}
+                        />
                     </Col>
                 </FormGroup>
                 <FormGroup row className='field__row'>
@@ -93,17 +93,3 @@ const FieldRowComponent: React.FC<{ stylePropId: string, parentId: string }> = (
 
 
 export default FieldRowComponent
-// {styleProperty.content.values.map((singleValue, index)=>{
-//     if(!!singleValue.reference){
-//         return gettingValueWithReference(
-//             singleValue.reference,
-//             themeState,
-//             styleProperty.content.metrics,
-//             singleValue.isMetric,
-//             parentId+styleProperty.name)
-//     }else{
-//         return singleValue.value
-//     }
-//     //return isReference ? themeState[]
-// })}{ styleProperty.content.metrics &&
-// `(${styleProperty.content.metrics})`}

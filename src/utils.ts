@@ -338,15 +338,15 @@ export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
         }, '');
     };
 
-    const getStringForStyles = ()=>{
-        const { cssArray, inputArray} = valuesArray.reduce(
+    const getStringForStyles = (isNotMetric: boolean, valuesArrayForFunc: IThemeItemValue[] = valuesArray)=>{
+        const { cssArray, inputArray} = valuesArrayForFunc.reduce(
             (
                 acc: {cssArray: Array<string | null>, inputArray: string[]},
                 singleValue: IThemeItemValue,
                 index: number
             ) => {
             const { reference , isMetric: isInitiallyMetric} = singleValue;
-            const metricPostFix = singleValue.isMetric ? rootMetrics : '';
+            const metricPostFix = isNotMetric && singleValue.isMetric ? rootMetrics : '';
             if(!reference){
                 const pushable = singleValue.value + metricPostFix;
                 acc.cssArray.push(pushable);
@@ -354,7 +354,7 @@ export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
             }else{
                 const {referenceChildrenId, referenceParentId} = reference;
                 acc.cssArray.push( getValuesFromReferences(reference, isInitiallyMetric));
-                acc.inputArray.push(` { ${referenceChildrenId}.${referenceParentId} }${metricPostFix} `);
+                acc.inputArray.push(` { ${referenceParentId}.${referenceChildrenId} }${metricPostFix} `);
             }
             return acc
         }, {
@@ -364,10 +364,35 @@ export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
 
 
         return {css: cssArray.join(' '), inputText: inputArray.join('') }
-    }
+    };
+
+    const getCssValuesFromString = (str: string)=>{
+        const regexpForBraces = /{.*?}/g;
+        const insideBracesArray =
+            str.match(regexpForBraces)?.map(x => x.replace(/[{ *}]/g, ""));
+
+        const insideBraces = str.replace(regexpForBraces, (match, key)=>{
+            const stringWithIDs = match.replace(/[{ *}]/g, "");
+            const [parentId, ownId] = stringWithIDs.split('.')
+            const values = obj[parentId]?.items[ownId]?.content.values;
+            if(values){
+                console.log(123, getStringForStyles(true, values), values, key)
+            }else{
+                console.log(23232, values, parentId, ownId)
+            }
+            return getStringForStyles(true , values).css
+        } )
+
+        const arrayWithoutSpaces = str.split(' ');
+        const arrayWithoutSpaces2 = insideBraces.split(' ').filter(Boolean);
+
+        console.log('arrayWithoutSpaces' ,  insideBraces, arrayWithoutSpaces2, arrayWithoutSpaces)
+
+    };
 
     return{
         getStringForStyles,
+        getCssValuesFromString,
     }
 
 }
