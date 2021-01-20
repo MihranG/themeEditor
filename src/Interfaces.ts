@@ -17,14 +17,18 @@ export interface IThemeItem{
 
 export interface IThemeItemContent{
     metrics: EnumMetrics | null,
-    values: Array<{
-        reference: null | {
-            referenceParentId: string,
-            referenceChildrenId: string
-        },
-        isMetric: boolean,
-        value: string
-    }>
+    values: IThemeItemValue[]
+}
+
+export interface IThemeItemValue{
+    reference: null | IThemeItemValueReference,
+    isMetric: boolean,
+    value: string
+}
+
+export interface IThemeItemValueReference{
+    referenceParentId: string,
+    referenceChildrenId: string
 }
 
 export enum EnumMetrics{

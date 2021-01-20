@@ -1,38 +1,91 @@
-import React, {useState} from "react";
-import {Card, Col, Row} from "reactstrap";
+import React, {ChangeEvent, FocusEvent, FormEvent, useRef, useState} from "react";
+import {Input, Col, Collapse, Row, FormGroup, Label, Form, Button} from "reactstrap";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState, editMetrics} from "./store";
+import {EnumMetrics, IThemeItem} from "./Interfaces";
+import {stylesService} from "./utils";
 
-interface IFieldRowComponentProps {
-    name: string,
-    id: string,
-    parentId: string,
-    content: {
-        metrics: string,
-        values: Array<{
-            value: null | string,
-            isMetricValue: boolean
-        }>
-    }
-}
-const FieldRowComponent: React.FC<IFieldRowComponentProps> = ({name, id, parentId, content}) =>{
+
+const FieldRowComponent: React.FC<{ stylePropId: string, parentId: string }> = ({stylePropId, parentId}) =>{
     const [isEditing, setIsEditing] = useState(false);
+    const dispatch = useDispatch();
+    const [val, setVal] = useState('ss');
+    const themeState = useSelector((state: RootState)=>state.theme);
+    const styleProperty: IThemeItem = useSelector((state: RootState)=>state.theme[parentId].items[stylePropId]);
+
+    const toggle = () => setIsEditing(!isEditing);
+    const onCheckBoxChoose = (e: ChangeEvent<HTMLInputElement>) => {
+        const metrics = e.target.value as EnumMetrics;
+        dispatch(editMetrics({id: stylePropId, parentId:  parentId, metrics }));
+    }
+
+    const stylesObject = stylesService(styleProperty.content, themeState);
+
     return (
-            <Row  className='field__row'>
-                <Col md={9} >
-                    <div className='field__description'>
+        <FormGroup className={isEditing ? 'row__container row__container-open' : 'row__container'}>
+            <Row className='field__row' >
+                <Col md={7} >
+                    <Label className='field__description' onClick={toggle}>
                         <div className='field__name'>
-                            Primary font color:
+                            {styleProperty.name}:
                         </div>
                         <div className='field__brief'>
-                            1px solid black
+                            {stylesObject.getStringForStyles().css}
                         </div>
-                    </div>
+                    </Label>
                 </Col>
-                <Col md={3}>
+                <Col md={4}>
                     <div className='field__reference'>
-                        {`${parentId}.${id}`}
+                        {`${parentId}.${stylePropId}`}
                     </div>
                 </Col>
+                {isEditing &&
+                    <Col md={1}>
+                        <Button close aria-label="Close" onClick={toggle}/>
+                    </Col>
+                }
             </Row>
+            <Collapse isOpen={isEditing}>
+                <FormGroup row className='field__row'>
+                    <Label md={2} >
+                        <Label>
+                            Input:
+                        </Label>
+                    </Label>
+                    <Col md={10} >
+                        <Input value={stylesObject.getStringForStyles().inputText}/>
+                    </Col>
+                </FormGroup>
+                <FormGroup row className='field__row'>
+                    <Label md={2} className='d-flex' >
+                        <Label>
+                            Metric type:
+                        </Label>
+                    </Label>
+                    <Col md={8} className='d-flex'>
+                        {Object.values(EnumMetrics).map((singleMetric, index)=>(
+                            <FormGroup check inline key={index}>
+                                <Label check>
+                                    <Input
+                                        type="checkbox"
+                                        checked={singleMetric === styleProperty.content.metrics}
+                                        disabled={!styleProperty.content.metrics}
+                                        onChange={onCheckBoxChoose}
+                                        value={singleMetric}
+                                    />
+                                    {singleMetric}
+                                </Label>
+                            </FormGroup>
+                        ))}
+                    </Col>
+                    <Col md={2}>
+                        <Button  aria-label="ok" onClick={toggle}>
+                            OK
+                        </Button>
+                    </Col>
+                </FormGroup>
+            </Collapse>
+        </FormGroup>
 
     )
 
@@ -40,3 +93,17 @@ const FieldRowComponent: React.FC<IFieldRowComponentProps> = ({name, id, parentI
 
 
 export default FieldRowComponent
+// {styleProperty.content.values.map((singleValue, index)=>{
+//     if(!!singleValue.reference){
+//         return gettingValueWithReference(
+//             singleValue.reference,
+//             themeState,
+//             styleProperty.content.metrics,
+//             singleValue.isMetric,
+//             parentId+styleProperty.name)
+//     }else{
+//         return singleValue.value
+//     }
+//     //return isReference ? themeState[]
+// })}{ styleProperty.content.metrics &&
+// `(${styleProperty.content.metrics})`}

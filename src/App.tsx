@@ -1,26 +1,22 @@
 import React from 'react';
-
-import {Card, CardTitle, Container} from 'reactstrap';
-import FieldComponent from "./FieldComponent";
-
+import { Provider } from "react-redux";
+import {Container} from 'reactstrap';
+import store from './store';
+import SimpleEditor from "./SimpleEditor";
 
 
 function App() {
-
   return (
-    <div className="App">
-      <Container>
-          <Card className='editor'>
-              <CardTitle className='editor__title'>
-                  simple text editor
-              </CardTitle>
-              <FieldComponent />
-          </Card>
-      </Container>
-    </div>
+      <Provider store={store}>
+          <div className="App">
+              <Container>
+                  <SimpleEditor />
+              </Container>
+          </div>
+      </Provider>
+
   );
 }
-
 
 
 export default App;
