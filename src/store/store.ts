@@ -1,6 +1,6 @@
 import {configureStore, createSlice, combineReducers, PayloadAction} from "@reduxjs/toolkit";
-import {initialThemeState} from "./utils";
-import {EnumMetrics, IThemeItemValue, IThemeState} from "./Interfaces";
+import {initialThemeState} from "./initialData";
+import {EnumMetrics, IThemeItemValue, IThemeState} from "../Interfaces";
 
 const teamReducerSlice = createSlice({
     name: 'teamReducerSlice',

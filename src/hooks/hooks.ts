@@ -1,7 +1,7 @@
-import {IThemeItem, IThemeItemContent} from "./Interfaces";
+import {IThemeItem, IThemeItemContent} from "../Interfaces";
 import {useSelector} from "react-redux";
-import {RootState} from "./store";
-import {stylesService} from "./utils";
+import {RootState} from "../store/store";
+import {stylesService} from "../utils/utils";
 import {ChangeEvent, useRef, useState} from "react";
 
 export function useStyleGenerator(content: IThemeItemContent): [string, (e: ChangeEvent<HTMLInputElement>)=>void, {css: string, inputText: string} ]{
@@ -17,7 +17,8 @@ export function useStyleGenerator(content: IThemeItemContent): [string, (e: Chan
             clearTimeout(timeoutRef.current)
         }
         timeoutRef.current = setTimeout(()=>{
-            stylesObject.getCssValuesFromString(e.target.value)
+            stylesObject.getCssValuesFromString(e.target.value);
+            // todo return then dispatch an action
         },300)
     }
 

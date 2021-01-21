@@ -3,7 +3,7 @@ import FieldComponent from "./FieldComponent";
 import React from "react";
 import {IThemeStateElement} from "./Interfaces";
 import {useSelector} from "react-redux";
-import {RootState} from "./store";
+import {RootState} from "./store/store";
 import FieldRowComponent from "./FieldRowComponent";
 
 const SimpleEditor = ()=> {

@@ -1,9 +1,9 @@
 import React, {ChangeEvent, useState} from "react";
 import {Input, Col, Collapse, Row, FormGroup, Label, Button} from "reactstrap";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState, editMetrics} from "./store";
+import {RootState, editMetrics} from "./store/store";
 import {EnumMetrics, IThemeItem} from "./Interfaces";
-import {useStyleGenerator} from "./hooks"
+import {useStyleGenerator} from "./hooks/hooks"
 
 
 const FieldRowComponent: React.FC<{ stylePropId: string, parentId: string }> = ({stylePropId, parentId}) =>{
