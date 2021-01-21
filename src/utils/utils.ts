@@ -55,55 +55,68 @@ export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
         return {css: cssArray.join(' '), inputText: inputArray.join('') }
     };
 
-    const getCssValuesFromString = (str: string): {error: boolean, values: string[] | null}=>{
+    const getCssValuesFromString = (str: string): {error: boolean, valuesArray: string[] | null, cssString?: string}=>{
         const areAllBracesClosed = checkBracesToBeClosed(str);
-        if(!areAllBracesClosed){
-            return {error: true , values: null}
-        }
-        const regexpForBraces = /{.*?}/g;
         const regexpForBraces1 = /\{ ?(.*?)\}/g;
-        const regexpForBraces11 = /\{\s*(.+?)\s*\}/g;
-        const regexpForBraces2 = /\{ ?(\w+?)\ ?}/g;
-        const regexpForBraces3 = /\{\s?(.*?)\s?\}/g;
-        const regexpForBraces4 = /(?<=\{ ?)(\w*?)(?=\} ?)/g;
-        const regexpForBraces5 = /(?<=\{ *)(\w.*)(?= *\})/g;
-        const regexpForBracesGettingRightStringBetweenBraces = /(?<=\{ ?)(\w+[.]\w+)(?= ?\})/g;
-        // { ?.*? ?}
+        const regexpForMultipleSpaces = /[ ]{2,}?/g;
+        const regexpForSingleLetters = /( +[a-zA-z_@^&=] +)/g
 
-        const insideBracesArray =
-            str.match(regexpForBraces)?.map(x => x.replace(/[{ *}]/g, ""));
+        const regexpForBraces2 = /\{\s*(.+?)\s*\}\w*/g;
+        const regexpForCheckingReference =/\w+\.\w+/g
+        const regexpForCheckingIsThereInvalidCharacter = /[^a-zA-z.0-9$_?/>,<;:'"()+\\`\-~ ]/g
 
-        const referencedVariableValues = str.replace(regexpForBraces1, (match, key)=>{
-            const stringWithIDs = match.replace(/[{ *}]/g, "");
-            const [parentId, ownId] = stringWithIDs.split('.')
+        console.log(323,str.match(regexpForMultipleSpaces),
+            str.match(regexpForSingleLetters))
+        if(!areAllBracesClosed
+            || regexpForSingleLetters.test(str)
+            || regexpForMultipleSpaces.test(str)){
+            return {error: true , valuesArray: null}
+        }
+
+
+        const referencedVariableValues = str.replace(regexpForBraces2, (match, key)=>{
+            // const stringWithIDs = match.replace(/[{ *}]/g, "");
+            const stringWithIDs = match.replace(/({ ?)|( ?}\w*)/g, "");
+            if(regexpForCheckingIsThereInvalidCharacter.test(stringWithIDs)){
+                return ERROR_STRING
+            }
+            const referencesTuple = stringWithIDs.split('.');
+            if(referencesTuple.length !== 2 ){
+                return ERROR_STRING
+            }
+            const [parentId, ownId] = referencesTuple;
             const values = obj[parentId]?.items[ownId]?.content.values;
+            console.log('values, re', referencesTuple, values)
             if(values){
-                console.log('vaaaa', parentId, ownId, getStringForStyles(true , values).css)
-                // todo in this case dispatch
+
                 return  getStringForStyles(true , values).css
             }else{
                 return  ERROR_STRING
             }
         } )
-        const insideBraces2 = str.match(regexpForBraces11);
-        const betweenText = insideBraces2?.map(s=>s.replace(/[{ \+* \+}]/g, ""))
-        console.log('insideBraces2', insideBraces2, referencedVariableValues, betweenText)
+        // const regexpForBraces = /{.*?}/g;
+        // const regexpForBraces2 = /\{\s*(.+?)\s*\}/g;
+        // const insideBracesArray =
+        //     str.match(regexpForBraces)?.map(x => x.replace(/[{ *}]/g, ""));
+        // const insideBraces2 = str.match(regexpForBraces11);
+        // const betweenText = insideBraces2?.map(s=>s.replace(/[{ \+\w \+}]/g, ""))
+        // const arrayOfReferencedItems = referencedVariableValues.split(' ').filter(Boolean);
 
 
-        const arrayWithoutSpaces = str.split(' ').filter((el)=>(
+        const arrayWithoutSpaces = referencedVariableValues.split(' ').filter((el)=>(
             !!el &&  !el.includes('{') && !el.includes('}')
         ));
-        const arrayOfReferencedItems = referencedVariableValues.split(' ').filter(Boolean);
-        // todo this one should be handled
 
-        console.log('arrayWithoutSpaces' ,  referencedVariableValues, arrayOfReferencedItems, arrayWithoutSpaces);
+        console.log({
+            arrayWithoutSpaces,
+
+        })
         if(!referencedVariableValues.includes(ERROR_STRING)){
-            console.log('ok', arrayWithoutSpaces, arrayOfReferencedItems, referencedVariableValues)
-            return {error: false , values: referencedVariableValues }
-        }else{
-            console.log('vori', arrayWithoutSpaces)
+
+            return {error: false , valuesArray: arrayWithoutSpaces , cssString: referencedVariableValues}
         }
-        return {error: true , values: null }
+
+        return {error: true , valuesArray: null }
 
     };
 
