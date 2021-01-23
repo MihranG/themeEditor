@@ -37,5 +37,10 @@ export enum EnumMetrics{
     PX='px'
 }
 
+export interface ICssValidation {
+    error: boolean,
+    valuesArray : string[] | null,
+    cssString?: string
+}
 
 

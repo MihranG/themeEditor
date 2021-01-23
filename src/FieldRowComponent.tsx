@@ -10,7 +10,7 @@ const FieldRowComponent: React.FC<{ stylePropId: string, parentId: string }> = (
     const [isEditing, setIsEditing] = useState(false);
     const dispatch = useDispatch();
     const styleProperty: IThemeItem = useSelector((state: RootState)=>state.theme[parentId].items[stylePropId]);
-    const [inputValue, setInputValue, stylesStrings] = useStyleGenerator(styleProperty.content);
+    const [inputValue, setInputValue, stylesStrings] = useStyleGenerator(styleProperty.content, {id: stylePropId, parentId});
 
     const toggle = () => setIsEditing(!isEditing);
     const onCheckBoxChoose = (e: ChangeEvent<HTMLInputElement>) => {

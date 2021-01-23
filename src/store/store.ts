@@ -10,12 +10,13 @@ const teamReducerSlice = createSlice({
             const {newTheme} = action.payload;
             state = newTheme
         },
-        editValue(state: IThemeState, action: PayloadAction<{id: string, parentId: keyof IThemeState, value: IThemeItemValue[]}>){
-            const {id, parentId, value} = action.payload;
-            state[parentId].items[id].content.values = value;
+        editValue(state: IThemeState, action: PayloadAction<{id: string, parentId: keyof IThemeState, values: IThemeItemValue[]}>){
+            const {id, parentId, values} = action.payload;
+            state[parentId].items[id].content.values = values;
         },
         editMetrics(state: IThemeState, action: PayloadAction<{id: string, parentId: string, metrics: EnumMetrics | null }>){
             const {id, parentId, metrics} = action.payload;
+            console.log('editMetrics', action.payload)
             state[parentId].items[id].content.metrics = metrics
         }
     },})
