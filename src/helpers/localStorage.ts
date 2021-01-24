@@ -1,4 +1,4 @@
-import {IThemeStateElement} from "../Interfaces";
+import {IThemeState} from "../Interfaces";
 
 const SIMPLE_THEME = 'simple_theme';
 const setItemToLocalStorage = (name: string, value: string) => {
@@ -13,16 +13,16 @@ const removeItemFromLocalStorage = (name: string): void =>{
     localStorage.removeItem(name)
 }
 
-export const setThemeToLocalStorage = (theme: IThemeStateElement): void => {
+export const setThemeToLocalStorage = (theme: IThemeState): void => {
     const themeStringified = JSON.stringify(theme);
     setItemToLocalStorage(SIMPLE_THEME, themeStringified);
 }
 
-const removeThemeFromLocalStorage = () : void =>{
+export const removeThemeFromLocalStorage = () : void =>{
     removeItemFromLocalStorage(SIMPLE_THEME);
 }
 
-export const getThemeFromLocalStorage = () : IThemeStateElement | null => {
+export const getThemeFromLocalStorage = () : IThemeState | null => {
     const gottenJSON = getItemFromLocalStorage(SIMPLE_THEME);
     if(gottenJSON){
         return JSON.parse(gottenJSON);

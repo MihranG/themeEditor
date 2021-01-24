@@ -1,8 +1,6 @@
 import React, {useState} from "react";
 import FieldRowComponent from "./FieldRowComponent";
 import {Button, Card, Collapse} from "reactstrap";
-import {useSelector} from "react-redux";
-import {RootState} from "./store/store";
 import {IThemeItem, IThemeStateElement} from "./Interfaces";
 
 const FieldComponent: React.FC<IThemeStateElement> = ({name, items, id})=>{

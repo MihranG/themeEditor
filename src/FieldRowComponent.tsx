@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useState} from "react";
-import {Input, Col, Collapse, Row, FormGroup, Label, Button} from "reactstrap";
+import {Input, Col, Collapse, Row, FormGroup, Label, Button, FormFeedback} from "reactstrap";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState, editMetrics} from "./store/store";
 import {EnumMetrics, IThemeItem} from "./Interfaces";
@@ -53,7 +53,9 @@ const FieldRowComponent: React.FC<{ stylePropId: string, parentId: string }> = (
                         <Input
                             value={inputValue}
                             onChange={setInputValue}
+                            invalid={styleProperty.content.error}
                         />
+                        <FormFeedback>please keep format as follows</FormFeedback>
                     </Col>
                 </FormGroup>
                 <FormGroup row className='field__row'>
@@ -74,21 +76,21 @@ const FieldRowComponent: React.FC<{ stylePropId: string, parentId: string }> = (
                                         value={singleMetric}
                                     />
                                     {singleMetric}
+
                                 </Label>
                             </FormGroup>
                         ))}
                     </Col>
                     <Col md={2}>
-                        <Button  aria-label="ok" onClick={toggle}>
+                        <Button  aria-label="ok" onClick={toggle} disabled={styleProperty.content.error}>
                             OK
                         </Button>
                     </Col>
                 </FormGroup>
+
             </Collapse>
         </FormGroup>
-
     )
-
 }
 
 

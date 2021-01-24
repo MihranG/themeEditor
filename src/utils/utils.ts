@@ -8,14 +8,26 @@ import {
 } from "../Interfaces";
 import {checkBracesToBeClosed} from "./stringUtils";
 const ERROR_STRING = '#ERROR#';
+const regexpForBraces1 = /\{ ?(.*?)\}/g;
+const regexpForMultipleSpaces = /[ ]{2,}?/g;
+const regexpForSingleLetters = /( +[a-zA-z_@^&=] +)/g
+const regexpForIsThereBraces = /({})/g
+
+const regexpForBraces2 = /\{\s*(.+?)\s*\}\w*/g;
+const regexpForBraces3 = /( ?{ ?)|( ?} ?)/g
+// const regexpForCheckingReference =/\w+\.\w+/g
+const regexpForCheckingIsThereInvalidCharacter = /[^a-zA-z.0-9$_?/>,<;:'"()+\\`\-~ ]/g
+const regexpForSpaceBeforeMetricUnits = /((( |[^0-9r}])(px|%|em|rem))|(px|%|em|rem)(\B))/g;
+const regexpForMetricUnits = / |( ?(px|%|em|rem) ?)/g;
+const regexpForMetricUnits2 = / ?(px|%|em|rem)/g;
 
 export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
     const { values: valuesArray , metrics: rootMetrics} = content;
     const getValuesFromReferences = (referenceData: IThemeItemValueReference, isInitiallyMetric: boolean)=>{
         const {referenceParentId: parentId, referenceChildrenId: childrenId} = referenceData;
-        const thisValue = obj[parentId].items[childrenId];
-        const { values } = thisValue.content;
-        return values.reduce((acc: string, el: IThemeItemValue) => {
+        const thisValue = obj[parentId]?.items[childrenId];
+        const values = thisValue?.content?.values;
+        return values?.reduce((acc: string, el: IThemeItemValue) => {
             const {reference, isMetric} = el;
             let concatable = '';
             const metricPostfix = isInitiallyMetric ? rootMetrics + ' ' : '';
@@ -44,7 +56,7 @@ export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
             const { reference , isMetric: isInitiallyMetric} = singleValue;
             const metricPostFix = !isNotMetric && singleValue.isMetric ? rootMetrics : '';
             if(!reference){
-                const pushable = singleValue.value + metricPostFix;
+                const pushable = singleValue.value + metricPostFix + ' ';
                 acc.cssArray.push(pushable);
                 acc.inputArray.push(pushable);
             }else{
@@ -63,33 +75,25 @@ export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
 
 
     const getMetricUnitsAndReplace = (str: string, unit: EnumMetrics) : string =>{
-        // const regexpForMetricUnits = /(em |px |rem )/g;
         const regexpForMetricUnits = /(em|px|rem)/g;
         return str.replace(regexpForMetricUnits, unit);
     }
 
     const getFirstMetricUnit = (str: string) : EnumMetrics | null => {
+        const regxpForCheckIsThere = /((\b)(\d)(px|%|em|rem)(\b))/g
         const regexpForMetricUnits = /(em|px|rem)/g;
-        const match = str.match(regexpForMetricUnits);
-        if(match){
-            return match[0] as EnumMetrics
+
+        if(regxpForCheckIsThere.test(str)){
+            const match = str.match(regexpForMetricUnits);
+            if(match){
+                return match[0] as EnumMetrics
+            }
         }
         return null
     }
 
     const getCssValuesFromString = (str: string): ICssValidation=>{
         const areAllBracesClosed = checkBracesToBeClosed(str);
-        const regexpForBraces1 = /\{ ?(.*?)\}/g;
-        const regexpForMultipleSpaces = /[ ]{2,}?/g;
-        const regexpForSingleLetters = /( +[a-zA-z_@^&=] +)/g
-        const regexpForIsThereBraces = /({})/g
-
-        const regexpForBraces2 = /\{\s*(.+?)\s*\}\w*/g;
-        const regexpForCheckingReference =/\w+\.\w+/g
-        const regexpForCheckingIsThereInvalidCharacter = /[^a-zA-z.0-9$_?/>,<;:'"()+\\`\-~ ]/g
-        const regexpForSpaceBeforeMetricUnits = /(( |\D)(px|%|([r?]em)))/g;
-        const match = str.match(regexpForSpaceBeforeMetricUnits)
-
         if(!areAllBracesClosed
             || regexpForSingleLetters.test(str)
             || regexpForMultipleSpaces.test(str)
@@ -100,6 +104,7 @@ export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
             const arrayOfValues = str.split(' ')
             return { error: false, valuesArray : arrayOfValues, cssString: str}
         }
+
 
         const referencedVariableValues = str.replace(regexpForBraces2, (match, key)=>{
             const stringWithIDs = match.replace(/({ ?)|( ?}\w*)/g, "");
@@ -113,7 +118,6 @@ export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
             const [parentId, ownId] = referencesTuple;
             const values = obj[parentId]?.items[ownId]?.content.values;
             if(values){
-                console.log('getStringForStyles(true , values)', getStringForStyles(false , values))
                 return getStringForStyles(false , values).css
             }else{
                 return  ERROR_STRING
@@ -131,7 +135,10 @@ export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
                 !!el &&  !el.includes('{') && !el.includes('}')
             ));
             if(!referencedVariableValues.includes(ERROR_STRING)){
-                return {error: false , valuesArray: arrayWithoutSpaces , cssString: referencedVariableValues}
+                const stringWithoutBraces = str.replace(regexpForBraces3, ' ');
+                const stringWithoutMetricUnits = stringWithoutBraces.replace(regexpForMetricUnits2, ' ');
+                const arrayOfStrings = stringWithoutMetricUnits.split(' ').filter(Boolean);
+                return {error: false , valuesArray: arrayOfStrings , cssString: referencedVariableValues};
             }
         }else{
             const arrayOfValues = str.split(' ')
@@ -148,6 +155,21 @@ export const stylesService = (content: IThemeItemContent, obj: IThemeState) =>{
 }
 
 //
-// const extractMetricsAndPrepareForStateUpdate = (values: string[]): IThemeItemValue[] => {
-//     return values.reduce(()=>{}, [])
-// }
+export const extractMetricsAndPrepareForStateUpdate = (values: string[]): IThemeItemValue[] => {
+    return values.reduce((acc: IThemeItemValue[], el: string)=>{
+        const elementValue = el.replace(regexpForMetricUnits, '');
+        let reference: IThemeItemValueReference | null = null;
+        if(el.includes('.') && (/(\D\.\D)/g).test(el)){
+            const [referenceParentId, referenceChildrenId] = el.split('.');
+            if(referenceParentId && referenceChildrenId){
+                reference = {referenceChildrenId, referenceParentId}
+            }
+        }
+        acc.push({
+            value: elementValue,
+            isMetric : elementValue !== el,
+            reference
+        })
+        return acc
+    }, [])
+}

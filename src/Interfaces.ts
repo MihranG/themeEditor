@@ -17,7 +17,8 @@ export interface IThemeItem{
 
 export interface IThemeItemContent{
     metrics: EnumMetrics | null,
-    values: IThemeItemValue[]
+    values: IThemeItemValue[],
+    error?: boolean
 }
 
 export interface IThemeItemValue{
@@ -40,7 +41,11 @@ export enum EnumMetrics{
 export interface ICssValidation {
     error: boolean,
     valuesArray : string[] | null,
+
     cssString?: string
 }
 
 
+export interface IThemeActionPayloadMain{
+    id: string, parentId: string
+}

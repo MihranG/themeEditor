@@ -1,12 +1,12 @@
 import React from 'react';
-import { Provider } from "react-redux";
+import {Provider} from "react-redux";
 import {Container} from 'reactstrap';
 import store from './store/store';
-import SimpleEditor from "./SimpleEditor";
+import SimpleEditor from './SimpleEditor';
 
 
 function App() {
-  return (
+    return (
       <Provider store={store}>
           <div className="App">
               <Container>
@@ -15,7 +15,7 @@ function App() {
           </div>
       </Provider>
 
-  );
+    );
 }
 
 
