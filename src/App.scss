@@ -1,24 +1,24 @@
-@import '~bootstrap/dist/css/bootstrap.min.css';
+@import "~bootstrap/dist/css/bootstrap.min.css";
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-  sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-  monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
 }
 
 .App {
   // text-align: center;
   .btn:focus {
     outline: none !important;
-    box-shadow: none  ;
+    box-shadow: none;
   }
 }
 
@@ -26,26 +26,26 @@ code {
   border: 1px solid black;
   margin: 50px;
   padding: 20px 30px;
-  &__title{
+  &__title {
     font-size: 32px;
     color: #3290c1;
   }
 }
 
-.field{
+.field {
   margin: 10px;
-  &__header{
+  &__header {
     display: flex;
     margin: 5px 0;
   }
 
-  &__title{
+  &__title {
     font-size: 20px;
     margin: 0 10px;
   }
 
-  &__toggle{
-    &_button{
+  &__toggle {
+    &_button {
       display: flex;
       align-items: center;
       justify-items: center;
@@ -54,11 +54,11 @@ code {
       height: 30px;
     }
 
-    &_icon{
+    &_icon {
       border-left: 10px solid gray;
       border-bottom: 10px solid transparent;
       border-top: 10px solid transparent;
-      &-open{
+      &-open {
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
         border-top: 10px solid gray;
@@ -66,49 +66,44 @@ code {
     }
   }
 
-  &__content{
-
+  &__content {
   }
 
-  .row__container{
-
-    &-open{
+  .row__container {
+    &-open {
       background: #b7b7b7;
       border-radius: 5px;
-      .field__description{
+      .field__description {
         font-weight: bold;
         color: #3290c1;
         cursor: pointer;
       }
     }
-
-
   }
 
-  &__row{
+  &__row {
     padding: 10px;
     font-size: 16px;
-    &-open{
+    &-open {
       background: #b7b7b7;
       border-radius: 5px;
       height: auto;
       color: #3290c1;
     }
-    .field__description{
+    .field__description {
       display: flex;
-      &:hover{
+      &:hover {
         font-weight: bold;
         color: #3290c1;
         cursor: pointer;
       }
-      .field__name{
+      .field__name {
         margin-right: 5px;
       }
 
-      .field__brief{
+      .field__brief {
         font-weight: bold;
       }
     }
   }
-
 }
