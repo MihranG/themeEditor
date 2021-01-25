@@ -3,7 +3,7 @@ import {initialThemeState} from "./initialData";
 import {EnumMetrics, IThemeActionPayloadMain, IThemeItemValue, IThemeState} from "../Interfaces";
 
 export const teamReducerSlice = createSlice({
-    name: 'teamReducerSlice',
+    name: 'themeReducerSlice',
     initialState: initialThemeState,
     reducers: {
         addThemeState(state: IThemeState, action: PayloadAction<{newTheme: IThemeState}>){

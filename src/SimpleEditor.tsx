@@ -36,8 +36,8 @@ const SimpleEditor = ()=> {
     }
 
     return (
-        <Card className='editor'>
-            <CardTitle className='editor__title'>
+        <Card className='editor' data-testid='editor_wrapper'>
+            <CardTitle className='editor__title' data-testid='editor_title'>
                 simple text editor
             </CardTitle>
             {fields.map((singleField: IThemeStateElement, index: number)=>(
@@ -48,13 +48,13 @@ const SimpleEditor = ()=> {
             )}
             <Row className='m-1'>
                 <Col md={4}>
-                    <Button onClick={onReset} color='secondary'>
+                    <Button onClick={onReset} data-testid='reset_button' color='secondary'>
                         Reset to initial
                     </Button>
                 </Col>
                 <Col md={4}/>
                 <Col md={4}>
-                    <Button color='primary' onClick={onSave} disabled={isThereError}>
+                    <Button color='primary' data-testid='save_button' onClick={onSave} disabled={isThereError}>
                         Save
                     </Button>
                 </Col>
