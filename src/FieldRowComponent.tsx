@@ -68,7 +68,7 @@ const FieldRowComponent: React.FC<{
               onChange={setInputValue}
               invalid={styleProperty.content.error}
             />
-            <FormFeedback>please keep format as follows</FormFeedback>
+            <FormFeedback>please keep format as in requirements</FormFeedback>
           </Col>
         </FormGroup>
         <FormGroup row className="field__row">

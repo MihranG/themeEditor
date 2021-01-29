@@ -22,7 +22,7 @@ const regexpForMetricUnits = / |( ?(px|%|em|rem) ?)/g;
 const regexpForMetricUnits2 = / ?(px|%|em|rem)/g;
 
 export const stylesService = (content: IThemeItemContent, obj: IThemeState) => {
-  //this is raw and UGLY version of stylesService
+  //this is raw and UGLY version of stylesService, ideally it would be cssParser  but did not have time for that.
   const { values: valuesArray, metrics: rootMetrics } = content;
   const getValuesFromReferences = (
     referenceData: IThemeItemValueReference,
